@@ -1,202 +1,129 @@
 ﻿<!DOCTYPE HTML>
 <html>
 <head>
-	<title>AngularJS</title>
+	<title>AJAX</title>
 	<meta charset="utf-8">
-	<meta name="description " content="Версія 2020.04.15. Методичні вказівки до виконання лабораторної роботи з курсу ИТех2 для потоку КИ.">
+	<meta name="description " content="Версия 2020.04.15. Методические указания для выполнения лабораторной работы по курсу ИТех2 для потока КИ.">
 	<link rel="stylesheet" type="text/css" href="styles.css">
 </head>
 <body>
 	<div class="container">
 		<div id="chapters">
-			<h1 id="start">Створення веб-застосунків на основі підходу MVC з використанням фреймворку AngularJS</h1>
+			<h1 id="start">Асинхронный обмен данными с сервером на основе технологии AJAX</h1>
 			<ul>
-				<li><a href="#lab_goal">Мета роботи</a></li>
-				<li><a href="#lab_manual">Методичні вказівки</a></li>
-				<li><a href="#lab_software">Опис лабораторної установки</a></li>
-				<li><a href="#lab_execution">Порядок виконання роботи</a></li>
-				<!-- <li><a href="#lab_variants">Варіанти завдань</a></li> -->
-				<li><a href="#lab_report">Зміст звіту</a></li>
-				<li><a href="#lab_questions">Контрольні питання</a></li>
-				<li><a href="#lab_literature">Додаткові джерела</a></li>
+				<li><a href="#lab_goal">Цель работы</a></li>
+				<li><a href="#lab_manual">Методические указания</a></li>
+				<li><a href="#lab_software">Описание лабораторной установки</a></li>
+				<li><a href="#lab_execution">Порядок выполнения работы</a></li>
+				<!-- <li><a href="#lab_variants">Варианты заданий</a></li> -->
+				<li><a href="#lab_report">Содержание отчета</a></li>
+				<li><a href="#lab_questions">Контрольные вопросы</a></li>
+				<li><a href="#lab_literature">Дополнительные источники</a></li>
 			</ul>
 		</div>
 			
 		<div class="chapter" id="lab_goal">
-			<span class="chapter_name">1. Мета роботи</span>
-			<p>Вивчення синтаксису та принципів роботи з фреймворком AngularJS. Вивчити основні сервіси для динамічного надсилання або завантаження даних із сервера за допомогою технології AJAX.</p>
+			<span class="chapter_name">1. Цель работы</span>
+			<p>Изучить программные механизмы технологии AJAX для динамической отправки или загрузки данных с сервера.</p>
 		</div>
 		
 		<div class="chapter" id="lab_manual">
-			<span class="chapter_name">2. Методичні вказівки</span>
-			<p>Під час підготовки до виконання лабораторної роботи слід ознайомитися з особливостями використання фреймворку AngularJS, вивчити можливості його основних сервісів і директив, способи створення директив, а також повторити питання використання асинхронної моделі обміну між клієнтом і сервером із застосуванням формату JSON.</p>
-			<p>AngularJS – JavaScript-фреймворк із відкритим вихідним кодом. Призначений для розробки односторінкових програм. Фреймворк працює з HTML, що містить додаткові атрибути користувача, які описуються директивами, і пов'язує введення або виведення області сторінки з моделлю. Модель описується звичайними змінними JavaScript, значення яких вказуються в коді або вилучаються зі статичних або динамічних даних JSON.</p>
-			<p>Розглянемо веб-додаток, побудований на основі фреймворку AngularJS, що складається з клієнтської та серверної частин, що дозволяє дізнатися про наявність книг заданого автора. Клієнтська частина являє собою інтерфейс користувача, що дозволяє вибрати у випадаючому списку ім'я автора. Серверна частина програми повертає відповідь у форматі JSON:</p>		
-			<pre>
-&lt;!doctype html&gt;
-&lt;html ng-app="exampleApp"&gt;
-&lt;head&gt;
-  &lt;meta charset="utf-8"&gt;
-&lt;/head&gt;
-&lt;body ng-controller="exampleController"&gt;
-  &lt;select ng-options="option.name for option in data.authors track by option.name" ng-model="data.selectedAuthor"&gt;
-  &lt;input value="Get" type="button" ng-click="load(data.selectedAuthor.name)"&gt;
-  &lt;table border="1"&gt;
-    &lt;tr&gt;&lt;th&gt;Book&lt;/th&gt;&lt;th&gt;Quantity&lt;/th&gt;&lt;/tr&gt;
-    &lt;tr ng-repeat="item in data.items"&gt;
-      &lt;td&gt;{{ item.book }}&lt;/td&gt;
-      &lt;td&gt;{{ item.quantity }}&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/table&gt;
-  &lt;p&gt;{{author}}&lt;/p&gt;
-  &lt;script type="text/javascript" src="angular.min.js"&gt;&lt;/script&gt;
-  &lt;script&gt;
-  var literature = {
-    authors: [],
-    items: []
-  };
-  
-  var exampleApp = angular.module("exampleApp", []);
-  exampleApp.controller("exampleController", function ($scope, $http) {
-    literature.authors.push({"name": "Пушкін"}, {"name": "Гоголь"});
-    literature.selectedAuthor = {"name": "Гоголь"};
-    $scope.data = literature;
-  
-    $scope.load = function(name) {
-      console.log(name);
-      $http({ method:'GET', 
-              url:'get.php', 
-              params: {'author': name}
-            }).
-      success(function(data) {
-        literature.items = data.books;
-      })
-    };
-  });
-  &lt;/script&gt;
-&lt;/body&gt;
-&lt;/html&gt;
-			</pre>
-			Наведений вище код – звичайна HTML-сторінка з доданими директивами AngularJS:
-			<br>
-			<span class="code_snippet">&lt;html ng-app="exampleApp"&gt;</span>
-			<br>Директива <b>ng-app</b> є головною директивою програми, задає область ангуляр-додатка або створює область для модуля.
-			<br><span class="code_snippet">&lt;body ng-controller="exampleController"&gt;</span>
-			<br>Директива <b>ng-controller</b> здійснює зв'язування елемента з контролером.
-			<br><span class="code_snippet">&lt;select ng-options="option.name for option in data.authors track by option.name" ng-model="data.selectedAuthor"&gt;</span>
-			<br>Директива <b>ng-model</b> дозволяє зв'язати значення елемента з моделлю. Директива <b>ng-options</b> дозволяє створити елементи випадаючого списка на основе массива или объекта. Значение value для ng-options устанавливается при помощи <b>track by</b> – в примере используется поле name объектов из набора data.authors.
-			<br><span class="code_snippet">&lt;input value="Get" type="button" ng-click="load(data.selectedAuthor.name)"&gt;</span>
-			<br>Директива <b>ng-click</b> додає обробник натискання кнопки. Як обробник цього прикладу використовується функція <span class="code_snippet">load</span>,який передається як параметр значення поля name змінної моделі, що відповідає директиві <span class="code_snippet">ng-model="data.selectedAuthor"</span>.
-			<br>Для виведення набору даних використовується директива <span class="code_snippet">ng-repeat</span>:			
-			<pre>
-  &lt;tr ng-repeat="item in data.items"&gt;
-    &lt;td&gt;{{ item.book }}&lt;/td&gt;
-    &lt;td&gt;{{ item.quantity }}&lt;/td&gt;
-  &lt;/tr&gt;
-			</pre>
-			<p>До сторінки підключено фреймворк (строка <span class="code_snippet">&lt;script type="text/javascript" src="angular.min.js"&gt;&lt;/script&gt;</span>)та клієнтський скрипт, в якому визначено модуль та контролер. У контролері заповнюється масив авторів, що використовується для побудови списку, що випадає (краще, звичайно, заповнювати подібний масив на основі даних з БД) і визначається автор за замовчуванням – який буде обраний у списку на початку роботи. Потім відбувається прив'язка моделі та визначається обробник для натискання на кнопку – внаслідок чого буде надіслано запит на сервер.</p>
-			<p>У серверній частині програми (файл <i>get.php, слугує обробником запиту, переданого через сервіс $http</i>) необхідно вказати коректний тип документа і реалізувати механізм формування JSON, який буде передано клієнту для обробки.</p>			
-			<pre>
-&lt;?php 
-  header('Content-Type: application/json'); 
-  header("Cache-Control: no-cache, must-revalidate"); 
-  		
-  $author = $_GET['author'];  
-  switch($author)
-  {
-    case 'Пушкін':
-      $data = array('author' =&gt; 'Пушкін А.С..',
-                    'books' =&gt; array(array('book' =&gt; 'Руслан і Людмила', 'quantity' =&gt; 2500),
-                                        array('book' =&gt; 'Євгеній Онєгін', 'quantity' =&gt; 2700)));
-    break;
-    case 'Гоголь':
-      $data = array('author' =&gt; 'Гоголь Н.В.',
-                    'books' =&gt; array(array('book' =&gt; 'Ревізор', 'quantity' =&gt; 1500 ),
-                                        array('book' =&gt; 'Мертві душі', 'quantity' =&gt; 1700)));
-    break;
-  }
-  echo json_encode($data);
-			</pre>
+			<span class="chapter_name">2. Методические указания</span>
+			<p>При подготовке к выполнению лабораторной работы следует ознакомиться с особенностями синхронного и асинхронного методов передачи данных, изучить форматы обмена данными JSON и XML, а также повторить методы и свойства класса XMLHttpRequest, а также возможности Fetch API.</p>
 		</div>
 		
 		<div class="chapter" id="lab_software">
-			<span class="chapter_name">3. Опис лабораторної установки</span>
-			<p>Для виконання лабораторної роботи рекомендується використовувати:</p>
+			<span class="chapter_name">3. Описание лабораторной установки</span>
+			<p>Для выполнения лабораторной работы рекомендуется использовать:</p>
 			<ul>
-				<li>текстовий редактор, що має підсвічування синтаксису: Notepad++ или Visual Studio Code;</li>
-				<li>браузер: Mozilla Firefox чи Google Chrome;</li>
-				<li>фреймворк AngularJS від 1.5.8;</li>
-				<li>збірка веб-сервера: XAMPP чи OpenServer.</li>
+				<li>текстовый редактор, имеющий подсветку синтаксиса: Notepad++ или Visual Studio Code;</li>
+				<li>браузер: Mozilla Firefox или Google Chrome;</li>
+				<li>сборка веб-сервера: XAMPP или OpenServer.</li>
 			</ul>
-			<p>Рекомендовані засоби є вільним програмним забезпеченням.</p>
-			<p>Для виконання лабораторної роботи не потрібен доступ до мережі Інтернет.</p>
+			<p>Рекомендуемые средства являются свободным программным обеспечением.</p>
+			<p>Для выполнения лабораторной работы не требуется доступ к сети Интернет.</p>
 		</div>
 		
 		<div class="chapter" id="lab_execution">
-			<span class="chapter_name">4. Порядок виконання роботи</span>
+			<span class="chapter_name">4. Порядок выполнения работы</span>
 			<ol>
-				<li>Використовується вихідний код з лабораторних робіт №1-2, присвячених роботі з даними за допомогою інтерфейсу PDO (чи MySQLi) та організації асинхронного обміну за допомогою технології AJAX. Перевірити його роботу.</li>
-				<li>Зробити форматом відповіді сервера на параметризовані запити JSON (якщо це не було зроблено раніше) і додати застосування фреймворку AngularJS:
+				<li>Используется исходный код с лабораторной работы, посвященной работе с данными с помощью интерфейса PDO или MySQLi. Проверить его работу.</li>
+				<li>Изменить код для обработки данных результатов запросов (для параметризированных запросов, реализуемых в прошлой лабораторной по вариантам) таким образом, чтобы вывод результата пользователю не приводил к перезагрузке страницы - т.е. использовать технологию Ajax. Использовать следующие форматы ответа от сервера:
 					<ul>
-						<li>прив'язка полів для введення і виведення інформації на сторінці до моделі.</li>
-						<!-- <li>валідація полів введення.</li> -->
-						<li>надсилання AJAX-запиту за допомогою сервісу $http.</li>
+						<li>в формате простого текста (непосредственно получать сгенерированный фрагмент HTML-кода и выводить его в заданном элементе стартовой страницы);</li>
+						<li>в формате XML (результат запроса на выборку помещается в генерируемом сервером XML-документе, который клиент считывает через свойство responseXml и формирует вывод пользователю);</li>
+						<li>в формате JSON (результат запроса на выборку помещается в массив, который затем преобразуется в JSON-строку с помощью метода json_encode и отправляется клиенту, который получает данные выборки из строки с помощью метода JSON.parse и формирует вывод пользователю).</li>
 					</ul>
+					Обратите внимание, необходимо показать применение всех трех форматов ответа от сервера - по одному формату на каждый из трех запросов на выборку.
+					<br>Возможно использование вместо XMLHttpRequest методов Fetch API для запроса, служащего примером работы с форматом JSON.
 				</li>
 			</ol>
-			<!-- <p>Результат роботи демонструється в електронному вигляді.</p> -->
+			<!-- <p>Результат работы демонстрируется в электронном виде.</p> -->
 		</div>
 		
 		<div class="chapter" id="lab_report">
-			<span class="chapter_name">5. Зміст звіту</span>
+			<span class="chapter_name">5. Содержание отчета</span>
 			<ul>
-				<li>титульний аркуш із зазначенням теми лабораторної, прізвища, ініціалів і групи студентів, які виконали (до 3-х осіб);</li> 
-				<li>мета роботи;</li> 
-				<li>варіант завдання;</li>
-				<li>вихідні коди (HTML, JavaScript і РНР);</li>
-				<li>результати виконання у вигляді знімків екрана браузера;</li>
-				<li>висновки по роботі.</li>
+				<li>титульный лист с указанием темы лабораторной, фамилии, инициалов и группы выполнивших студентов (до 3-х человек)</li> 
+				<li>цель работы</li> 
+				<li>вариант задания</li>
+				<li>исходные коды (HTML, JavaScript и РНР)</li>
+				<li>результаты выполнения ассинхронных запросов в виде снимков экрана браузера</li>
+				<li>выводы по работе</li>
 			</ul>
-			<p>Допускається здача звіту в електронному вигляді. Для захисту наявність роздрукованого звіту не є необхідною.</p>
+			<p>Допускается сдача отчета в электронном виде. Для защиты лабораторной наличие распечатанного отчета не является необходимым. При выкладывании исходного кода на GitHub помните про дамп БД, для тех вариантов используемой л/р по PDO, в которых не предлагалось уже готовой БД для работы.</p>
 		</div>
 		
 		<div class="chapter" id="lab_questions">
-			<span class="chapter_name">6. Контрольні питання</span>
+			<span class="chapter_name">6. Контрольные вопросы</span>
 			<ol>
-				<li>Які існують способи побудови архітектури веб-додатка?</li>
-				<li>Які функції виконують елементи архітектури Model-View-Controller?</li>
-				<li>Переваги підходу MVC. Різновиди MVC.</li>
-				<li>У чому переваги відокремлення логіки від уявлення?</li>
-				<li>Що таке Front-End і Back-End?</li>
-				<li>Які ви знаєте типи шаблонів і чим вони відрізняються?</li>
-				<li>Що таке Smarty? Які його можливості?</li>
-				<li>У чому недоліки використання CMS?</li>
-				<li>Особливості застосування фреймворків?</li>
-				<li>Чим відрізняються SPA від традиційних веб-додатків?</li>
-				<li>Які директиви AngularJS вам відомі?</li>
-				<li>Як створити свою директиву??</li>
-				<li>Сервіси фреймворку AngularJS.</li>
-				<!-- <li>Найпоширеніші веб-атаки та захист від них.</li>
-				<li>Способи валідації користувацьких даних на стороні клієнта і сервера. Застосування регулярних виразів.</li> -->
+				<li>Перечислите преимущества и недостатки использования технологии AJAX.</li>
+				<li>Каковы недостатки синхронной отправки запросов?</li>
+				<li>Укажите этапы выполнения AJAX запроса и его возможные состояния.</li>
+				<li>Как открыть синхронное соединение, используя технологию AJAX?</li>
+				<li>Как отправить POST-запрос?</li>
+				<li>Какими объектами и методами обеспечивается технология AJAX в JavaScript?</li>
+				<li>Особенности формата данных XML, правила оформления.</li>
+				<li>Какие заголовки нужно использовать при формировании ответа от сервера в формате XML?</li>
+				<li>С помощью каких DOM свойств можно получить значение узла элемента в ответе в формате XML?</li>
+				<li>В чем разница между XML DOM свойствами nodeValue и textContent?</li>
+				<li>Как определить, имеет ли элемент XML дочерние узлы?</li>
+				<li>Какие методы служат для получения значений XML элементов?</li>
+				<li>Как получить значение требуемого атрибута элемента XML?</li>
+				<li>Что такое JSON? Какие методы на стороне клиента и сервера для работы с этим форматом?</li>
+				<li>Как из массива получить JSON закодированную строку?</li>
+				<li>Как из JSON строки получить объект JavaScript?</li>
+				<li>Какие реализации библиотек поддержки AJAX существуют?</li>
+				<li>Какие методы библиотеки jQuery используются для работы с AJAX?</li>
+				<li>В чем разница между методом $.ajax() и методом $.get()?</li>
+				<li>Как передать параметры POST запроса, используя библиотеку jQuery?</li>
+				<li>Как обработать ответ от сервера в формате JSON, используя средства библиотеки jQuery?</li>
+				<li>Для чего используется метод библиотеки jQuery .load()?</li>
+				<li>Как использовать метод fetch() для отправки запросов серверу?</li>
+				<li>Что такое кросс-доменные запросы?</li>
+				<li>Что такое CORS?</li>
+				<li>В чем заключается подход JSONP?</li>
 			</ol>
-			<p>Знання відповідей на наведені запитання є необхідною, але не достатньою умовою для отримання високої оцінки за захист лабораторної роботи. Пам'ятайте про теми, розглянуті на лекціях!</p>
+			<p>Знание ответов на приведенные вопросы является необходимым, но не достаточным условием для получения высокой оценки за защиту лабораторной работы. Помните про темы, рассмотренные на лекциях!</p>
 		</div>
 		
 		<div class="chapter" id="lab_literature">
-			<span class="chapter_name">СПИСОК ЛІТЕРАТУРИ</span>
+			<span class="chapter_name">СПИСОК ЛИТЕРАТУРЫ</span>
 			<ol>  
-				<li><a href="https://docs.angularjs.org/api" target="_blank">AngularJS API Docs</a></li>
-				<li><a href="https://metanit.com/web/angular/" target="_blank">Онлайн-керівництво з AngularJS</a></li>
-				<li><a href="https://blog.csssr.ru/2015/11/24/ng-options" target="_blank">Опис використання випадаючих списків</a></li>
-				<li><a href="https://habr.com/ru/post/172975/" target="_blank">AngularJS для звиклих до jQuery</a></li>
-				<li><a href="https://habr.com/ru/post/167793/" target="_blank">Валідація форм у AngularJS</a></li>
-				<!-- <li>Джордж Шлосснейгл "Професійне програмування на PHP".</li>
-				<li>Кевін Янк "PHP і MySQL. Від новачка до професіонала".</li> -->
+				<li>Flanagan D. JavaScript: The Definitive Guide / David Flanagan. – O'Reilly, 2020.</li>
+				<li>JavaServer Faces. Библиотека профессионала, 3-е издание, Дэвид М. Гери, Кей С. Хорстманн. – Вильямс. 2011. – 540 с.</li>
+				<li>Николас Закас, Джереми Мак-Пик, Джо Фосетт "Ajax для профессионалов"</li>
+				<li><a href="https://learn.javascript.ru/xmlhttprequest" target="_blank">Объект XMLHttpRequest</a></li>
+				<li><a href="https://habr.com/ru/post/245145/" target="_blank">Про Ajax из "Выразительного JavaScript"</a></li>
+				<li><a href="https://developer.mozilla.org/ru/docs/Web/HTTP/CORS" target="_blank">CORS</a></li>
+				<li><a href="https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API" target="_blank">Fetch API</a></li>
+				<li>Про Fetch API: <a href="https://learn.javascript.ru/fetch-api" target="_blank">https://learn.javascript.ru/fetch-api</a>, <a href="https://learn.javascript.ru/fetch" target="_blank">https://learn.javascript.ru/fetch</a></li>
+				<li><a href="https://habr.com/ru/company/ruvds/blog/337662/" target="_blank">Пример использования промисов и XMLHttpRequest</a></li>
 			</ol>
-		</div>		
-		<br><a href="#start">Повернутися до початку</a>
-		<br><a href="..\..\index.html">Повернутися на стартову сторінку ресурсу</a>
-		<!-- Вдалого відпрацювання! --> 
-	</div>	
+		</div>
+		<br><a href="#start">Вернуться к началу</a>
+		<br><a href="..\..\index.html">Вернуться на стартовую страницу ресурса</a>
+		<!-- Удачной отработки! --> 
+	</div>
 </body>
 </html>
